@@ -1,0 +1,32 @@
+{% extends './base.html' %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<style>
+    label{
+        display: block;
+        margin-bottom: 10px
+    }
+    input {
+        width: 100%;
+        display: block;
+        padding: 20px;
+        border-radius:15px;
+        border: 1px solid #1f2229;
+        margin-bottom: 20px
+    }
+</style>
+
+<section class="block">
+        <div class="container">
+          <h1 class="title">Вход</h1>
+          <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button href="{% url 'login_page' %}" class="button is-primary mb-3">Войти</button>
+            <p>Если у вас нет аккаунта, пройдите <a href="{% url 'sign_up_page' %}">регистрацию</a></p>
+          </form>
+        </div>
+</section>
+{% endblock %}

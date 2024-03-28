@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+            content="width"=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA_Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static './css/bulma.min.css' %}">
+    <link rel="stylesheet" href="{% static './css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar is-black" role="navigation" aria-label="main navigation">
+            {% if user.is_authenticated %}
+          <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+              Sport News
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+              <span aria-hidden="true"></span>
+            </a>
+          </div>
+
+          <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+              <a class="navbar-item" href="{% url 'home_page' %}">
+                Главная
+              </a>
+
+              <a class="navbar-item" href="{% url 'all_news_page' %}" %}>
+                Новости
+              </a>
+
+              <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                  @{{user.username}}
+                </a>
+
+                <div class="navbar-dropdown">
+                  <a class="navbar-item" href="{% url 'admin:index' %}">
+                    Админ панель
+                  </a>
+                  <a class="navbar-item is-selected" href="{% url 'logout_request' %}">
+                    Выход
+                  </a>
+                </div>
+              </div>
+            </div>
+              {% else %}
+              <div class="navbar-brand">
+                  <a class="navbar-item" href="#">
+                  Sport News
+                </a>
+
+                <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                  <span aria-hidden="true"></span>
+                </a>
+
+                  <div id="navbarBasicExample" class="navbar-menu">
+                <div class="navbar-start">
+                  <a class="navbar-item" >
+                    Главная
+                  </a>
+
+                  <a class="navbar-item">
+                    Новости
+                  </a>
+                </div>
+
+
+                </div>
+              </div>
+            <div class="navbar-end">
+
+
+              <div class="navbar-item">
+                <div class="buttons">
+                  <a class="button is-primary" href="{% url 'sign_up_page' %}">
+                    <strong>Регистрация</strong>
+                  </a>
+                  <a class="button is-light" href="{% url 'login_page' %}">
+                    Вход
+                  </a>
+                </div>
+              </div>
+                {% endif %}
+            </div>
+          </div>
+</nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

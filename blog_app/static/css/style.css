@@ -1,0 +1,20 @@
+.block {
+    display: flex;
+    align_items: center;
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+.card-row {
+    display: flex;
+    gap: 30px;
+    flex-wrap:wrap;
+     margin: 0 auto;
+
+}
+
+.card-row #card{
+    flex-basis: 23%;
+    height: 100%;
+    margin: 10px:
+}
