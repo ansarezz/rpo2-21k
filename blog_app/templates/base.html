@@ -10,12 +10,13 @@
     <link rel="stylesheet" href="{% static './css/bulma.min.css' %}">
     <link rel="stylesheet" href="{% static './css/style.css' %}">
 </head>
+
 <body>
     <nav class="navbar is-black" role="navigation" aria-label="main navigation">
             {% if user.is_authenticated %}
           <div class="navbar-brand">
-            <a class="navbar-item" href="#">
-              Sport News
+            <a class="navbar-item" href="{% url 'about_us_page' %}">
+              Ozge
             </a>
 
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -33,7 +34,7 @@
               </a>
 
               <a class="navbar-item" href="{% url 'all_news_page' %}" %}>
-                Новости
+                Ассортимент
               </a>
 
               <div class="navbar-item has-dropdown is-hoverable">
@@ -53,8 +54,8 @@
             </div>
               {% else %}
               <div class="navbar-brand">
-                  <a class="navbar-item" href="#">
-                  Sport News
+                 <a class="navbar-item" href="{% url 'about_us_page' %}">
+                  Ozge
                 </a>
 
                 <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -66,12 +67,12 @@
 
                   <div id="navbarBasicExample" class="navbar-menu">
                 <div class="navbar-start">
-                  <a class="navbar-item" >
+                    <a class="navbar-item" href="{% url 'home_page' %}" style="font-size:20px;">
                     Главная
                   </a>
 
-                  <a class="navbar-item">
-                    Новости
+                <a class="navbar-item" href="{% url 'all_news_page' %}" %} style="font-size:20px;">
+                    Ассортимент
                   </a>
                 </div>
 

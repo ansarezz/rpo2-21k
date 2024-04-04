@@ -1,0 +1,128 @@
+{% extends './base.html' %}
+
+{% block title %}Все Новости{% endblock %}
+{% block content %}
+
+<style>
+    .card img {
+        width: 100%;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #fff; /* Черный цвет фона */
+    }
+
+
+    .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #F2F2F2; /* Черный цвет фона */
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); /* Черный цвет тени */
+        color: #000; /* Белый цвет текста */
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        color: #000; /* Синий цвет для заголовков */
+        font-weight: 300;
+        text-align: center; /* Выравнивание заголовков по центру */
+    }
+
+    p {
+        line-height: 1.6;
+        text-align: justify;
+    }
+
+    .highlight {
+        font-weight: bold;
+    }
+
+    .team-section {
+        margin-top: 50px;
+    }
+
+    .team-member {
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+
+    }
+
+    .team-member img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 20px;
+    }
+
+    .team-member-info {
+        flex: 1;
+    }
+
+    .team-member-name {
+        font-weight: bold;
+    }
+
+    .team-member-role {
+        color: #000;
+    }
+</style>
+
+<section class="block">
+    <div class="container">
+        <h1>О нас!</h1>
+        <p>Добро пожаловать в нашу компанию!</p>
+        <p>Мы - команда творческих профессионалов, увлеченных созданием уникальной и стильной одежды для наших клиентов. Наша миссия - вдохновлять и приносить радость через моду и стиль.</p>
+        <p>Наша компания основана на <span class="highlight">страсти к моде </span> и <span class="highlight">желанию поделиться </span> этой страстью с миром. Начиная с скромных начинаний, мы выросли в уважаемый бренд, предлагающий широкий ассортимент модной одежды для всех возрастов и предпочтений.</p>
+        <p>Мы стремимся к тому, чтобы каждый наш товар отражал высокое качество и индивидуальность. Наша команда дизайнеров постоянно следит за последними тенденциями моды, чтобы создавать коллекции, которые вдохновляют и подчеркивают индивидуальность каждого нашего клиента.</p>
+        <p>Наша главная <span class="highlight">цель</span> - удовлетворить потребности и ожидания наших клиентов. Мы стремимся к тому, чтобы каждый человек, носивший нашу одежду, чувствовал себя уверенно и стильно в любой ситуации.Ozge bol.</p>
+        <div class="team-section">
+            <h2>Основатели</h2>
+            <div class="team-member">
+                <img src="#" alt="Team Member 1">
+                <div class="team-member-info">
+                    <div class="team-member-name">Ансар Серекканов</div>
+                    <div class="team-member-role">CEO</div>
+                </div>
+            </div>
+            <div class="team-member">
+                <img src="#" alt="Team Member 2">
+                <div class="team-member-info">
+                    <div class="team-member-name">Ескендир Даулеткалиев</div>
+                    <div class="team-member-role">CFO</div>
+                </div>
+            </div>
+            <div class="team-member">
+                <img src="#" alt="Team Member 3">
+                <div class="team-member-info">
+                    <div class="team-member-name">Муслим Мурат</div>
+                    <div class="team-member-role">CTO</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+    <div class="container">
+        <nav class="breadcrumb has-bullet-separator" aria-label="breadcrumbs">
+        </nav>
+        <div class="card-row">
+            {% for post in posts  %}
+            <div class="card" id="card">
+                <div class="card-content ">
+                    <img src="{{ post.image }}" class="card-img-top" alt="">
+                    <div class="content">
+                        <h3>{{ post.title }}</h3>
+                        <h5>{{ post.description }}</h5>
+                        {{ post.price }}
+                    </div>
+                    <a href="{% url 'news_detail_page' pk=post.pk %}" class="button is-white">Купить</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

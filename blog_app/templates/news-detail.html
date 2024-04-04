@@ -3,19 +3,396 @@
 {% block title %} {{ post.title }} {% endblock %}
 
 {% block content %}
-<section class="block">
-        <div class="container">
-          <nav class="breadcrumb has-bullet-separator" aria-label="breadcrumbs">
-            <ul>
-              <li><a href="{% url 'home_page' %}">Главная</a></li>
-              <li><a href="{% url 'all_news_page' %}">Все новости</a></li>
-              <li class="is-active"><a href="#" aria-current="page">{{ post.title }}</a></li>
-            </ul>
-          </nav>
-          <h1 class="title">{{ post.title }}</h1>
-          <h5>{{ post.post_date }}</h5>
-          <img src="{{post.image}}" alt="{{post.title}}">
-          <p>{{ post.description }}</p>
+<style>
+
+.bottom-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+}
+
+.last-cards-container {
+    display: flex;
+    overflow-x: auto;
+}
+
+.card {
+    flex: 0 0 auto;
+    width: 100px; /* Регулируйте размер карточек по вашему усмотрению */
+    height: 100px; /* Регулируйте размер карточек по вашему усмотрению */
+    background-color: #f0f0f0;
+    margin-right: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+    img {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .img-and-title {
+        display: flex;
+        gap: 100px;
+    }
+
+    .img-and-title p {
+        font-size: 30px;
+        font-weight: 500;
+    }
+
+    .title {
+        text-align: left;
+        font-size: 25px;
+        position: relative;
+        top: 25px;
+        font-weight: 300;
+        font-size: 20px;
+    }
+
+    .title-block {
+
+         position: fixed; /* Помещаем изображение в фиксированное положение */
+         bottom: 300px; /* Отступ от нижнего края страницы */
+         z-index: 9988
+    }
+
+    /* Стили для выпадающего списка */
+    #size-dropdown {
+        font-size: 15px; /* Увеличиваем размер шрифта */
+        padding: 10px;
+        margin-top: 10px; /* Отступ сверху */
+        background-color: #f9f9f9; /* Задаем цвет фона */
+        appearance: none; /* Убираем стандартную стрелку выбора */
+        outline: none; /* Убираем обводку */
+        cursor: pointer; /* Делаем указатель при наведении */
+    }
+
+    #size-dropdown option {
+        font-size: 15px; /* Увеличиваем размер шрифта опций */
+    }
+
+    .price-and-dropdown {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-weight: 600;
+    }
+
+    .max_desc {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        font-weight: 300;
+    }
+
+    /* Стили для модального окна */
+    .modal {
+        display: none; /* Скрываем модальное окно по умолчанию */
+        position: fixed; /* Фиксируем модальное окно */
+        z-index: 9999; /* Устанавливаем большой z-index для высокого приоритета */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; /* Добавляем прокрутку, если контент не помещается на экране */
+        background-color: rgba(0,0,0,0.5); /* Добавляем полупрозрачное черное затемнение фона */
+    }
+
+    /* Стили для контента внутри модального окна */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* Центрируем модальное окно вертикально и горизонтально */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Устанавливаем ширину модального окна */
+    }
+
+    /* Стили для кнопки закрытия модального окна */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* Стили для формы оплаты внутри модального окна */
+    #paymentForm label,
+    #paymentForm input[type="text"],
+    #paymentForm button {
+        margin: 10px 0;
+    }
+
+    #paymentForm button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    #paymentForm button:hover {
+        background-color: #45a049;
+    }
+
+    .notification {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 5px;
+        z-index: 9999;
+    }
+
+    .img-block img{
+        display: block;
+
+    }
+
+    .img-block{
+        width:100%;
+    }
+
+</style>
+
+<div class="container">
+    <div class="columns">
+        <div class="column is-half">
+            <div class="img-block">
+                <img src="{{post.image}}" alt="{{post.title}}">
+                <img src="{{post.cover_image}}"/>
+            </div>
         </div>
-      </section>
+        <div class="column is-half">
+            <div class="title-block">
+            <h1 class="title">{{ post.title }}</h1>
+            <p>{{ post.description }}</p>
+            <div class="max_desc">
+                {{ post.description_max }}
+            </div>
+            <div class="price-and-dropdown">
+                {{ post.price }}
+                <select id="size-dropdown">
+                    <option value="" selected disabled>Выбор размера</option>
+                    <option value="xs">XS</option>
+                    <option value="s">S</option>
+                    <option value="m">M</option>
+                    <option value="l">L</option>
+                    <option value="xl">XL</option>
+                </select>
+                {% if user.is_authenticated %}
+                <div class="buttons">
+                    <button id="buyButton" class="button is-white">Купить</button>
+                </div>
+                {% else %}
+                <div class="buttons">
+                    <a class="button is-white" href="{% url 'login_page' %}">
+                        <strong>Купить</strong>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Оплата товара</h2>
+    <form id="paymentForm" method="post" action="{% url 'process_payment' %}">
+        {% csrf_token %}
+        <label for="card_number">Номер карты:</label><br>
+        <input type="text" id="card_number" name="card_number" maxlength="16"><br>
+        <small id="card_number_hint" style="color: red;"></small><br>
+
+        <label for="card_cvv">CVV код:</label><br>
+        <input type="text" id="card_cvv" name="card_cvv" maxlength="3"><br>
+        <small id="card_cvv_hint" style="color: red;"></small><br>
+
+        <label for="card_expiry">Срок действия (мм/гг):</label><br>
+        <input type="text" id="card_expiry" name="card_expiry" placeholder="мм/гг" maxlength="5"><br>
+        <small id="card_expiry_hint" style="color: red;"></small><br>
+
+        <label for="card_owner">Имя владельца карты:</label><br>
+        <input type="text" id="card_owner" name="card_owner"><br>
+        <small id="card_owner_hint" style="color: red;"></small><br>
+
+        <button type="submit">Подтвердить оплату</button>
+    </form>
+
+      <div id="bottomBar" class="bottom-bar">
+    <h2>Последние карточки</h2>
+    <div id="lastCardsContainer" class="last-cards-container">
+        <!-- Здесь будут отображаться последние карточки -->
+    </div>
+</div>
+
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById('myModal');
+const btn = document.getElementById("buyButton");
+const span = document.getElementsByClassName("close")[0];
+const paymentForm = document.getElementById("paymentForm");
+
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+
+    setTimeout(function() {
+        notification.remove();
+    }, 3000); // Скрыть оповещение через 3 секунды
+}
+
+// Обработчик формы платежа
+paymentForm.onsubmit = function(event) {
+    const cardNumberInput = document.getElementById('card_number');
+    const cardNumberHint = document.getElementById('card_number_hint');
+    const cardCVVInput = document.getElementById('card_cvv');
+    const cardCVVHint = document.getElementById('card_cvv_hint');
+    const cardExpiryInput = document.getElementById('card_expiry');
+    const cardExpiryHint = document.getElementById('card_expiry_hint');
+    const cardOwnerInput = document.getElementById('card_owner');
+    const cardOwnerHint = document.getElementById('card_owner_hint');
+
+    const cardNumber = cardNumberInput.value.trim();
+    const cardCVV = cardCVVInput.value.trim();
+    const cardExpiry = cardExpiryInput.value.trim();
+    const cardOwner = cardOwnerInput.value.trim();
+
+    const cardNumberLength = cardNumber.length;
+    if (cardNumberLength !== 8 || !/^\d+$/.test(cardNumber)) {
+        cardNumberHint.textContent = 'Введите корректные данные (8 цифр)';
+        event.preventDefault();
+    } else {
+        cardNumberHint.textContent = '';
+    }
+
+    const cardCVVLength = cardCVV.length;
+    if (cardCVVLength !== 3 || !/^\d+$/.test(cardCVV)) {
+        cardCVVHint.textContent = 'Введите корректные данные (3 цифры)';
+        event.preventDefault();
+    } else {
+        cardCVVHint.textContent = '';
+    }
+
+    const cardExpiryParts = cardExpiry.split('/');
+    if (cardExpiryParts.length !== 2 || !/^\d{2}$/.test(cardExpiryParts[0]) || !/^\d{2}$/.test(cardExpiryParts[1])) {
+        cardExpiryHint.textContent = 'Введите корректные данные (мм/гг)';
+        event.preventDefault();
+    } else {
+        cardExpiryHint.textContent = '';
+    }
+
+    if (cardOwner === '') {
+        cardOwnerHint.textContent = 'Введите имя владельца карты';
+        event.preventDefault();
+    } else {
+        cardOwnerHint.textContent = '';
+    }
+
+    if (!cardNumberHint.textContent && !cardCVVHint.textContent && !cardExpiryHint.textContent && !cardOwnerHint.textContent) {
+        // Отправка формы через AJAX
+        const formData = new FormData(paymentForm);
+        fetch(paymentForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                showNotification('Платеж успешно обработан');
+                modal.style.display = "none"; // Скрыть модальное окно
+                paymentForm.reset(); // Очистить поля формы
+            } else {
+                showNotification('Ошибка при обработке платежа');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Произошла ошибка при отправке запроса');
+        });
+
+        event.preventDefault(); // Останавливаем отправку формы
+    }
+}
+
+// Функция для загрузки последних карточек
+function loadLastCards() {
+    fetch('{% url "home_page" %}') // Замените на URL вашего эндпоинта для получения последних карточек
+        .then(response => response.json())
+        .then(data => {
+            const lastCardsContainer = document.getElementById('lastCardsContainer');
+            lastCardsContainer.innerHTML = ''; // Очищаем контейнер
+
+            // Создаем и добавляем карточки в контейнер
+            data.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('card');
+                cardElement.textContent = card.title; // Предполагаем, что у карточки есть поле title
+                lastCardsContainer.appendChild(cardElement);
+            });
+        })
+        .catch(error => console.error('Error fetching last cards:', error));
+}
+
+// Функция для отображения/скрытия полосы с последними карточками в зависимости от положения скролла
+function toggleBottomBarVisibility() {
+    const bottomBar = document.getElementById('bottomBar');
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        bottomBar.style.display = 'block';
+    } else {
+        bottomBar.style.display = 'none';
+    }
+}
+
+// Загружаем последние карточки при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadLastCards);
+
+// Прикрепляем обработчик прокрутки страницы для отображения/скрытия полосы с последними карточками
+window.addEventListener('scroll', toggleBottomBarVisibility);
+
+
+</script>
+
 {% endblock %}

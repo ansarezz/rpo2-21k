@@ -1,27 +1,53 @@
 {% extends './base.html' %}
-
-{% block title %}Главная{% endblock %}
+{% load static %}
+{% block title %}OZGE{% endblock %}
 {% block content %}
+<style>
+    .card img{
+        width:100%;
+    }
+
+    .card {
+        border-radius: 0;
+        box-shadow: none;
+        display: inline-block; /* Располагаем карточки в ряд */
+        overflow: hidden;
+    }
+
+    .card-body{
+        padding: 10px;
+    }
+
+ .arrow-down {
+        text-align: center;
+        margin-top: 20px; /* Регулируем вертикальный отступ */
+    }
+
+    .arrow-down img {
+        width: 50px; /* Регулируем размер стрелки */
+    }
+</style>
 <section class="block">
         <div class="container">
-          <h1 class="title">Свежие новости</h1>
+          <h1 class="title">Новинки</h1>
            <div class="card-row">
                {% for post in posts  %}
               <div class="card" id="card">
-                  <div class="card-content">
-                      <img src="{{ post.image }}" alt="">
-                    <div class="content">
+                  <a href="{% url 'news_detail_page' pk=post.pk %}">
+                  <img src="{{ post.image }}"  class="card-img-top" alt="">
+                  </a>
+                    <div class="card-body ">
                         <h3>{{ post.title }}</h3>
-                        <h5>{{ post.post_date }}</h5>
-                            {{ post.description|truncatewords:10 }}
-                    </div>
-                      <a href="{% url 'news_detail_page' pk=post.pk %}" class="button is-primary">Read</a>
-        </div>
-    </div>
-                {% endfor %}
-           </div>
+                        <h5>{{ post.description }}</h5>
+                            {{ post.price }}
 
-            <a href="{% url 'all_news_page' %}" class="mt-5 button is-primary">Все новости</a>
-        </div>
+         </div>
+              </div>
+                {% endfor %}
+           <div class="arrow-down" style="text-align: center; bottom: 10px; width: 100%;">
+                <a href="{% url 'all_news_page' %}">
+            <img src="{% static  'photo/free-icon-arrow-down-3353104.png' %}" alt="Стрелка вниз">
+                </a>
+            </div>
       </section>
 {% endblock %}
